@@ -48,16 +48,19 @@ const main = async () => {
   // чтобы успеть выбрать файл
   await wait(10000);
   
+  checkRequestFinished(page);
+  
   if (await page.evaluate((div) => !!document.querySelector(div), errorDiv)) {
     console.log('Файл не поддерживается');
     await clickOnSelector(page, closeBtn);
     await clickOnSelector(page, clip);
     await clickOnSelector(page, docBtn);
-  
+    
     // чтобы успеть выбрать файл
     await wait(8000);
     await clickOnSelector(page, sendBtn);
   } else {
+    await wait(5000);
     await clickOnSelector(page, sendBtn);
   }
 };
@@ -66,4 +69,8 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-main();
+function checkRequestFinished(page) {
+  page.once('requestfinished', () => console.log(`Request Finished`));
+}
+
+main().then(() => console.log('Browser launch'));
