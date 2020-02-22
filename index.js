@@ -23,7 +23,7 @@ async function clickOnSelector(page, selector) {
   let elem = await page.$(selector);
   if (elem) {
     await elem.hover();
-    await elem.click()
+    await elem.click();
   }
 }
 
