@@ -37,18 +37,34 @@ const main = async () => {
   let docBtn = 'span[data-icon=document]';
   let closeBtn = 'span[data-icon=x-light]';
   let sendBtn = 'span[data-icon=send-light]';
-  let errorDiv = '#app > div > div > div._2aMzp > div._10V4p._1jxtm > span > div > span > div > div > div.rK2ei.USE1O > div._2CDPn > span > div > div.azEEh';
+  let errorDiv = 'span > div > div.azEEh';
+  
+  //let fileToUpload = './response.mp4';
   
   await page.waitForSelector(clip, { timeout: 30000 })
     .then(() => clickOnSelector(page, clip))
     .catch(() => console.log('TimeOut Clip'));
   
+  //await wait(2000);
+  
+  
+  //let inputs = await page.$$('input[type=file]');
+  //let input = inputs[1];
+  
+  //await input.uploadFile([fileToUpload]);
+  
   await clickOnSelector(page, photoBtn);
   
-  // чтобы успеть выбрать файл
-  await wait(10000);
+  await Promise.race([
+    page.waitForSelector(sendBtn, { timeout: 10000 }),
+    page.waitForSelector(errorDiv, { timeout: 10000 })
+  ]);
   
-  checkRequestFinished(page);
+  
+  // чтобы успеть выбрать файл
+  //await wait(10000);
+  
+  //checkRequestFinished(page);
   
   if (await page.evaluate((div) => !!document.querySelector(div), errorDiv)) {
     console.log('Файл не поддерживается');
@@ -56,11 +72,14 @@ const main = async () => {
     await clickOnSelector(page, clip);
     await clickOnSelector(page, docBtn);
     
-    // чтобы успеть выбрать файл
+    // чтобы успеть выбрать файл перед отправкой
     await wait(8000);
+    
     await clickOnSelector(page, sendBtn);
   } else {
-    await wait(5000);
+    // перед отправкой
+    await wait(2000);
+    
     await clickOnSelector(page, sendBtn);
   }
 };
@@ -70,7 +89,7 @@ function wait(ms) {
 }
 
 function checkRequestFinished(page) {
-  page.once('requestfinished', () => console.log(`Request Finished`));
+  page.on('requestfinished', (req) => console.log(`Request done: ${req.url()}`));
 }
 
-main().then(() => console.log('Browser launch'));
+main();
