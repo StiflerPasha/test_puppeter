@@ -55,10 +55,14 @@ const main = async () => {
   
   await clickOnSelector(page, photoBtn);
   
-  await Promise.race([
-    page.waitForSelector(sendBtn, { timeout: 10000 }),
-    page.waitForSelector(errorDiv, { timeout: 10000 })
-  ]);
+  try {
+    await Promise.race([
+      page.waitForSelector(sendBtn, { timeout: 10000 }),
+      page.waitForSelector(errorDiv, { timeout: 10000 })
+    ]);
+  } catch (error) {
+    console.log('Test error', error);
+  }
   
   
   // чтобы успеть выбрать файл
@@ -75,12 +79,12 @@ const main = async () => {
     // чтобы успеть выбрать файл перед отправкой
     await wait(8000);
     
-    await clickOnSelector(page, sendBtn);
+    //await clickOnSelector(page, sendBtn);
   } else {
     // перед отправкой
     await wait(2000);
     
-    await clickOnSelector(page, sendBtn);
+    //await clickOnSelector(page, sendBtn);
   }
 };
 
@@ -88,8 +92,8 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function checkRequestFinished(page) {
-  page.on('requestfinished', (req) => console.log(`Request done: ${req.url()}`));
+async function getClipInputs(page, channel) {
+  //доделать
 }
 
 main();
