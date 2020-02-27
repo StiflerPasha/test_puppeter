@@ -77,7 +77,7 @@ const main = async () => {
     await clickOnSelector(page, docBtn);
     
     // чтобы успеть выбрать файл перед отправкой
-    await wait(8000);
+    //await wait(8000);
     
     //await clickOnSelector(page, sendBtn);
   } else {
