@@ -93,7 +93,7 @@ function wait(ms) {
 }
 
 async function getClipInputs(page, channel) {
-  //доделать
+
 }
 
 main();
