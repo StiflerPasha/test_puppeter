@@ -70,7 +70,7 @@ const main = async () => {
   
   //checkRequestFinished(page);
   
-  if (await page.evaluate((div) => !!document.querySelector(div), errorDiv)) {
+  /*if (await page.evaluate((div) => !!document.querySelector(div), errorDiv)) {
     console.log('Файл не поддерживается');
     await clickOnSelector(page, closeBtn);
     await clickOnSelector(page, clip);
@@ -85,7 +85,7 @@ const main = async () => {
     await wait(2000);
     
     //await clickOnSelector(page, sendBtn);
-  }
+  }*/
 };
 
 function wait(ms) {
