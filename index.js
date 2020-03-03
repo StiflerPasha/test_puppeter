@@ -41,11 +41,36 @@ const main = async () => {
   
   //let fileToUpload = './response.mp4';
   
+  page.waitForSelector2 = async function (selector, options = { timeout: 30000 }) {
+    let result = await page.evaluate((selector, options) => {
+      return new Promise(async (resolve, reject) => {
+        
+        async function timeout(ms) {
+          return new Promise(resolve => {
+            setTimeout(resolve, ms);
+          });
+        }
+        
+        let waitFor = Date.now() + options.timeout;
+        while (Date.now() < waitFor) {
+          let el = document.querySelector(selector);
+          if (el) {
+            resolve(true);
+            return;
+          }
+          await timeout(50);
+        }
+        resolve(false);
+      });
+    }, selector, options);
+    if (!result) throw { message: 'waitForSelector2 error' };
+  };
+  
   await page.waitForSelector(clip, { timeout: 30000 })
     .then(() => clickOnSelector(page, clip))
     .catch(() => console.log('TimeOut Clip'));
   
-  //await wait(2000);
+  await wait(2000);
   
   
   //let inputs = await page.$$('input[type=file]');
@@ -57,8 +82,8 @@ const main = async () => {
   
   try {
     await Promise.race([
-      page.waitForSelector(sendBtn, { timeout: 10000 }),
-      page.waitForSelector(errorDiv, { timeout: 10000 })
+      page.waitForSelector2(sendBtn, { timeout: 10000 }),
+      page.waitForSelector2(errorDiv, { timeout: 10000 })
     ]);
   } catch (error) {
     console.log('Test error', error);
