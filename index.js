@@ -66,11 +66,66 @@ const main = async () => {
     if (!result) throw { message: 'waitForSelector2 error' };
   };
   
-  await page.waitForSelector(clip, { timeout: 30000 })
-    .then(() => clickOnSelector(page, clip))
-    .catch(() => console.log('TimeOut Clip'));
+  // await page.waitForSelector(clip, { timeout: 30000 })
+  //   //.then(() => clickOnSelector(page, clip))
+  //   .catch(() => console.log('TimeOut Clip'));
+  //
+  // await wait(5000);
   
-  await wait(2000);
+  
+  
+  
+  
+  
+  
+  
+  // TODO: по поводу этого ожидания не уверен
+  await page.waitForNavigation({ waitUntil: 'networkidle0' });
+  
+  await page.waitForSelector('#pane-side', { timeout: 60000 });
+  console.log('Pane load');
+  
+  
+  let paneContact = await page.evaluate((selector) => {
+    
+    const getReactObject = (el) => {
+      for (let key in el) {
+        if (key.startsWith('__reactInternalInstance$')) {
+          return el[key];
+        }
+      }
+    };
+    
+    let nodeList = [...document.querySelectorAll(selector)];
+    let reactObjArr = nodeList
+      .map(contact => {
+        const { displayName, profilePicThumb } = getReactObject(contact).memoizedProps.children.props.contact;
+        return ({
+          name: displayName || '',
+          avatar: {
+            eurl: profilePicThumb.eurl || '',
+            img: profilePicThumb.img || ''
+          }
+        });
+      });
+    
+    return JSON.stringify(reactObjArr);
+  }, '#pane-side > div:nth-child(1) > div > div > div');
+  
+  
+  console.log(JSON.parse(paneContact));
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
   //let inputs = await page.$$('input[type=file]');
@@ -78,16 +133,16 @@ const main = async () => {
   
   //await input.uploadFile([fileToUpload]);
   
-  await clickOnSelector(page, photoBtn);
+  //await clickOnSelector(page, photoBtn);
   
-  try {
-    await Promise.race([
-      page.waitForSelector2(sendBtn, { timeout: 10000 }),
-      page.waitForSelector2(errorDiv, { timeout: 10000 })
-    ]);
-  } catch (error) {
-    console.log('Test error', error);
-  }
+  // try {
+  //   await Promise.race([
+  //     page.waitForSelector2(sendBtn, { timeout: 10000 }),
+  //     page.waitForSelector2(errorDiv, { timeout: 10000 })
+  //   ]);
+  // } catch (error) {
+  //   console.log('Test error', error);
+  // }
   
   
   // чтобы успеть выбрать файл
@@ -95,30 +150,29 @@ const main = async () => {
   
   //checkRequestFinished(page);
   
-  if (await page.evaluate((div) => !!document.querySelector(div), errorDiv)) {
-    console.log('Файл не поддерживается');
-    await clickOnSelector(page, closeBtn);
-    await clickOnSelector(page, clip);
-    await clickOnSelector(page, docBtn);
-    
-    // чтобы успеть выбрать файл перед отправкой
-    await wait(8000);
-    
-    //await clickOnSelector(page, sendBtn);
-  } else {
-    // перед отправкой
-    await wait(2000);
-    
-    //await clickOnSelector(page, sendBtn);
-  }
+  // if (await page.evaluate((div) => !!document.querySelector(div), errorDiv)) {
+  //   console.log('Файл не поддерживается');
+  //   await clickOnSelector(page, closeBtn);
+  //   await clickOnSelector(page, clip);
+  //   await clickOnSelector(page, docBtn);
+  //
+  //   // чтобы успеть выбрать файл перед отправкой
+  //   await wait(8000);
+  //
+  //   //await clickOnSelector(page, sendBtn);
+  // } else {
+  //   // перед отправкой
+  //   await wait(2000);
+  //
+  //   //await clickOnSelector(page, sendBtn);
+  // }
 };
 
 function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function getClipInputs(page, channel) {
-
-}
 
 main();
+
+// #pane-side > div:nth-child(1) > div > div > div
