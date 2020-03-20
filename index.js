@@ -73,12 +73,6 @@ const main = async () => {
   // await wait(5000);
   
   
-  
-  
-  
-  
-  
-  
   // TODO: по поводу этого ожидания не уверен
   await page.waitForNavigation({ waitUntil: 'networkidle0' });
   
@@ -114,18 +108,6 @@ const main = async () => {
   
   
   console.log(JSON.parse(paneContact));
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   
   //let inputs = await page.$$('input[type=file]');
